@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{# home.html — the front page. You may edit this freely. #}
+{% block content %}
+<section class="hero">
+  <h1>{{ team.group.topic }}</h1>
+  <p class="lead">{{ team.group.description }}</p>
+</section>
+
+<section class="cards">
+  {% for p in nav %}
+  <a class="card" href="{{ url_for('page', name=p.name) }}">
+    <span class="card-kicker">{{ p.name }}</span>
+    <span class="card-title">{{ p.title }}</span>
+  </a>
+  {% endfor %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    const modal = document.getElementById('loginModal');
+    const trigger = document.querySelector('[data-login-open]');
+    if (!modal || !trigger) return;
+
+    const modalBox = modal.querySelector('.modal-box');
+    if (!modalBox) return;
+
+    function bindCloseButton() {
+      const closeButton = modalBox.querySelector('[data-login-close]');
+      if (!closeButton) return;
+      closeButton.addEventListener('click', function () {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+      });
+    }
+
+    function renderChoice() {
+      modalBox.innerHTML = `
+        <button type="button" class="close-modal" aria-label="Close login popup" data-login-close>×</button>
+        <div class="auth-choice">
+          <h2 id="loginTitle">Login</h2>
+          <p class="auth-choice-text">Choose an account action</p>
+          <div class="auth-choice-grid">
+            <a href="/signin" class="auth-choice-btn">Sign In</a>
+            <a href="/signup" class="auth-choice-btn auth-choice-btn-primary">Sign Up</a>
+          </div>
+        </div>
+      `;
+      bindCloseButton();
+    }
+
+    if (!trigger.dataset.authPopupBound) {
+      trigger.dataset.authPopupBound = 'true';
+      trigger.addEventListener('click', function () {
+        renderChoice();
+        modal.classList.add('show');
+        modal.setAttribute('aria-hidden', 'false');
+      });
+    }
+
+    modal.addEventListener('click', function (event) {
+      if (event.target === modal) {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && modal.classList.contains('show')) {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    });
+  })();
+</script>
+{% endblock %}

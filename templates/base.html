@@ -1,0 +1,111 @@
+<!doctype html>
+{# base.html — GIVEN, DO NOT EDIT. Header, menu and footer for every page.
+   Your page goes inside {% block content %} in your own templates/pageN.html.
+   Page-specific JavaScript goes inside {% block scripts %} (or static/js/pageN.js). #}
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title or team.group.name }} · {{ team.group.name }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+{% block head %}{% endblock %}
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="{{ url_for('home') }}">
+      <img src="{{ url_for('static', filename='eng-logo.png') }}" alt="คณะวิศวกรรมศาสตร์ ม.อุบลฯ">
+      <span class="brand-text">
+        <span class="brand-line1">คณะวิศวกรรมศาสตร์ มหาวิทยาลัยอุบลราชธานี</span>
+        <span class="brand-line2">1309102 การเขียนโปรแกรมคอมพิวเตอร์ · Computer Programming Project</span>
+      </span>
+    </a>
+    <div class="header-actions">
+      <span class="group-badge">{{ team.group.name }} · {{ team.group.section }}</span>
+      <a href="/page3" class="cart-link">View Cart</a>
+      <button type="button" class="login-btn" data-login-open>Login</button>
+    </div>
+  </div>
+  <nav class="wrap site-nav">
+    <a href="{{ url_for('home') }}" class="{{ 'active' if request.path == '/' }}">หน้าแรก</a>
+    {% for p in nav %}
+      <a href="{{ url_for('page', name=p.name) }}" class="{{ 'active' if request.path == '/' + p.name }}">{{ p.title }}</a>
+    {% endfor %}
+  </nav>
+</header>
+
+<main class="wrap">
+  {% if msg %}<div class="banner">{{ msg }}</div>{% endif %}
+  {% if notice %}<div class="banner">{{ notice }}</div>{% endif %}
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>{{ team.group.name }} — {{ team.group.topic }}</span>
+    <span class="members">
+      {% for m in team.members %}{{ m.name }}{% if not loop.last %} · {% endif %}{% endfor %}
+    </span>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="loginModal" aria-hidden="true">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <button type="button" class="close-modal" aria-label="Close login popup" data-login-close>×</button>
+    <h2 id="loginTitle">Login</h2>
+    <form class="login-form">
+      <label>
+        <span>Email</span>
+        <input type="email" placeholder="you@example.com">
+      </label>
+      <label>
+        <span>Password</span>
+        <input type="password" placeholder="••••••••">
+      </label>
+      <button type="submit" class="btn login-submit">Sign In</button>
+    </form>
+  </div>
+</div>
+
+{% block scripts %}{% endblock %}
+<script>
+  const loginModal = document.getElementById('loginModal');
+  const openLoginBtn = document.querySelector('[data-login-open]');
+  const closeLoginBtn = document.querySelector('[data-login-close]');
+
+  function openLoginModal() {
+    if (!loginModal) return;
+    loginModal.classList.add('show');
+    loginModal.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeLoginModal() {
+    if (!loginModal) return;
+    loginModal.classList.remove('show');
+    loginModal.setAttribute('aria-hidden', 'true');
+  }
+
+  if (openLoginBtn) {
+    openLoginBtn.addEventListener('click', openLoginModal);
+  }
+
+  if (closeLoginBtn) {
+    closeLoginBtn.addEventListener('click', closeLoginModal);
+  }
+
+  if (loginModal) {
+    loginModal.addEventListener('click', function (event) {
+      if (event.target === loginModal) {
+        closeLoginModal();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && loginModal && loginModal.classList.contains('show')) {
+      closeLoginModal();
+    }
+  });
+</script>
+</body>
+</html>

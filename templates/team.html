@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{# templates/team.html — the team page. Basic layout given; fill team.json, then make it yours. #}
+{% block content %}
+<h1>{{ group.name }} <small class="muted">· {{ group.section }}</small></h1>
+<p class="lead">{{ group.topic }} — {{ group.description }}</p>
+
+<h2>สมาชิก ({{ count }} คน)</h2>
+<div class="member-grid">
+  {% for m in members %}
+  <div class="member">
+    {% if m.image %}
+    <div class="avatar"><img src="{{ url_for('static', filename='images_team/' ~ m.image) }}" alt="{{ m.name }}" class="avatar-img"></div>
+    {% else %}
+    <div class="avatar">{{ m.initial }}</div>
+    {% endif %}
+    <div class="member-name">{{ m.name }}</div>
+    <div class="muted">{{ m.id }}</div>
+    <div class="role">{{ m.role }}</div>
+    <div class="task">{{ m.task }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+<h2>ตารางงาน</h2>
+<table>
+  <tr><th>ชื่อ</th><th>รหัส</th><th>บทบาท</th><th>งานที่รับผิดชอบ</th></tr>
+  {% for m in members %}
+  <tr><td>{{ m.name }}</td><td>{{ m.id }}</td><td>{{ m.role }}</td><td>{{ m.task }}</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    const modal = document.getElementById('loginModal');
+    const trigger = document.querySelector('[data-login-open]');
+    if (!modal || !trigger) return;
+
+    const modalBox = modal.querySelector('.modal-box');
+    if (!modalBox) return;
+
+    function bindCloseButton() {
+      const closeButton = modalBox.querySelector('[data-login-close]');
+      if (!closeButton) return;
+      closeButton.addEventListener('click', function () {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+      });
+    }
+
+    function renderChoice() {
+      modalBox.innerHTML = `
+        <button type="button" class="close-modal" aria-label="Close login popup" data-login-close>×</button>
+        <div class="auth-choice">
+          <h2 id="loginTitle">Login</h2>
+          <p class="auth-choice-text">Choose an account action</p>
+          <div class="auth-choice-grid">
+            <a href="/signin" class="auth-choice-btn">Sign In</a>
+            <a href="/signup" class="auth-choice-btn auth-choice-btn-primary">Sign Up</a>
+          </div>
+        </div>
+      `;
+      bindCloseButton();
+    }
+
+    if (!trigger.dataset.authPopupBound) {
+      trigger.dataset.authPopupBound = 'true';
+      trigger.addEventListener('click', function () {
+        renderChoice();
+        modal.classList.add('show');
+        modal.setAttribute('aria-hidden', 'false');
+      });
+    }
+
+    modal.addEventListener('click', function (event) {
+      if (event.target === modal) {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && modal.classList.contains('show')) {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    });
+  })();
+</script>
+{% endblock %}

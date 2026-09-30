@@ -1,0 +1,14 @@
+{
+  "group": {
+    "name": "Group 013",
+    "section": "SEC 04",
+    "topic": "SAINT SINNER streetwear storefront",
+    "description": "เว็บร้านค้าเสื้อผ้า streetwear ของแบรนด์ SAINT SINNER ที่มีหน้าร้านสินค้า รายละเอียดสินค้า และตะกร้าสินค้า"
+  },
+  "members": [
+    {"name": "นาย ปรเมศวร์ ถวิล", "id": "69130740172", "role": "หัวหน้ากลุ่ม", "task": "หาสินค้า,ทำเว็บไซต์", "image": "panic_sol.jpg"},
+    {"name": "นาย ศิวกร แก้วมณี", "id": "69130740275", "role": "สมาชิก", "task": "ทำเว็บไซต์, ออกแบบ UI", "image": "speedmeme.jpg"},
+    {"name": "นาย ณัฐชนน จันทร์ผอง", "id": "69130749114", "role": "สมาชิก", "task": "ทำหน้าทีม,ตรวจสอบโค้ด", "image": "nape.jpg"},
+    {"name": "นาย เจษฎา เทศนา", "id": "69130740086", "role": "สมาชิก", "task": "ตรวจสอบโค้ด", "image": "papa.jpg"}
+  ]
+}

@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="cart-layout">
+  <section class="cart-panel cart-items">
+    <h1>{{ title }}</h1>
+    {% if items %}
+      {% for item in items %}
+        <div class="cart-line">
+          <img src="{{ item.image }}" alt="{{ item.name }}">
+          <div class="cart-line-info">
+            <h3>{{ item.name }}</h3>
+            <p>{{ item.tag }} · {{ item.category }}</p>
+            <div class="cart-controls">
+              <form method="post">
+                <input type="hidden" name="action" value="minus">
+                <input type="hidden" name="no" value="{{ item.no }}">
+                <button type="submit">−</button>
+              </form>
+              <span>{{ item.qty }}</span>
+              <form method="post">
+                <input type="hidden" name="action" value="plus">
+                <input type="hidden" name="no" value="{{ item.no }}">
+                <button type="submit">+</button>
+              </form>
+            </div>
+          </div>
+          <div class="cart-line-total">
+            <strong>฿{{ item.price * item.qty }}</strong>
+            <form method="post">
+              <input type="hidden" name="action" value="remove">
+              <input type="hidden" name="no" value="{{ item.no }}">
+              <button class="link-button" type="submit">Remove</button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-box">Your cart is empty.</div>
+    {% endif %}
+  </section>
+
+  <aside class="cart-panel cart-summary">
+    <h2>Summary</h2>
+    <div class="summary-row"><span>Subtotal</span><strong>฿{{ subtotal }}</strong></div>
+    <div class="summary-row"><span>Estimated Shipping</span><strong>฿{{ shipping }}</strong></div>
+    <hr>
+    <div class="summary-row total"><span>Grand Total</span><strong>฿{{ total }}</strong></div>
+
+    {% if items %}
+      {% if checkout_open %}
+        <div class="payment-box">
+          <h3>ชำระเงิน</h3>
+          <p>สแกน QR code ด้านล่างเพื่อชำระเงิน</p>
+          <div class="qr-box">
+            <img src="/static/img/qr-placeholder.svg" alt="QR code สำหรับ QR ทดลอง">
+          </div>
+          <div class="payment-row">
+            <span>จำนวนที่ต้องชำระ</span>
+            <strong>฿{{ total }}</strong>
+          </div>
+          <div class="payment-row">
+            <span>ชื่อบัญชี</span>
+            <strong>Group 13</strong>
+          </div>
+          <form method="post">
+            <input type="hidden" name="action" value="pay">
+            <button class="btn full" type="submit">ยืนยันชำระเงิน (ทดลอง)</button>
+          </form>
+        </div>
+        <a class="btn btn-ghost full" href="/page3" style="margin-top: 12px;">กลับไปตะกร้า</a>
+      {% else %}
+        <form method="get" action="/page3" style="margin-top: 12px;">
+          <input type="hidden" name="checkout" value="1">
+          <button class="btn full" type="submit">Checkout</button>
+        </form>
+      {% endif %}
+    {% endif %}
+
+    <form method="post" style="margin-top: 12px;">
+      <input type="hidden" name="action" value="clear">
+      <button class="btn btn-ghost full" type="submit">Clear Cart</button>
+    </form>
+  </aside>
+</div>
+
+<section class="cart-panel tracking-panel">
+  <h2>ตรวจสอบสถานะพัสดุ</h2>
+  <form method="get" action="/page3" class="tracking-form">
+    <label for="tracking-code">กรอกเลขพัสดุ</label>
+    <input id="tracking-code" type="text" name="track" value="{{ tracking_query }}" placeholder="เช่น PK12345678" required>
+    <button class="btn" type="submit">ค้นหาพัสดุ</button>
+  </form>
+  {% if tracking_order %}
+    <div class="payment-box success-box tracking-result">
+      <div class="payment-row"><span>เลขพัสดุ</span><strong>{{ tracking_order.tracking_code }}</strong></div>
+      <div class="payment-row"><span>สถานะ</span><strong>{{ tracking_order.status }}</strong></div>
+      <div class="payment-row"><span>วันที่สั่งซื้อ</span><strong>{{ tracking_order.created_at }}</strong></div>
+    </div>
+  {% elif tracking_query %}
+    <div class="empty-box tracking-result">ไม่พบเลขพัสดุนี้ กรุณาตรวจสอบแล้วลองอีกครั้ง</div>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    const modal = document.getElementById('loginModal');
+    const trigger = document.querySelector('[data-login-open]');
+    if (!modal || !trigger) return;
+
+    const modalBox = modal.querySelector('.modal-box');
+    if (!modalBox) return;
+
+    function bindCloseButton() {
+      const closeButton = modalBox.querySelector('[data-login-close]');
+      if (!closeButton) return;
+      closeButton.addEventListener('click', function () {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+      });
+    }
+
+    function renderChoice() {
+      modalBox.innerHTML = `
+        <button type="button" class="close-modal" aria-label="Close login popup" data-login-close>×</button>
+        <div class="auth-choice">
+          <h2 id="loginTitle">Login</h2>
+          <p class="auth-choice-text">Choose an account action</p>
+          <div class="auth-choice-grid">
+            <a href="/signin" class="auth-choice-btn">Sign In</a>
+            <a href="/signup" class="auth-choice-btn auth-choice-btn-primary">Sign Up</a>
+          </div>
+        </div>
+      `;
+      bindCloseButton();
+    }
+
+    if (!trigger.dataset.authPopupBound) {
+      trigger.dataset.authPopupBound = 'true';
+      trigger.addEventListener('click', function () {
+        renderChoice();
+        modal.classList.add('show');
+        modal.setAttribute('aria-hidden', 'false');
+      });
+    }
+
+    modal.addEventListener('click', function (event) {
+      if (event.target === modal) {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && modal.classList.contains('show')) {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    });
+  })();
+</script>
+{% endblock %}

@@ -1,0 +1,84 @@
+[
+  {
+    "tracking_code": "PK43274379",
+    "created_at": "2026-09-29 00:26",
+    "status": "กำลังเตรียมจัดส่ง",
+    "items": [
+      {
+        "name": "Raspberry Pi 4",
+        "category": "board",
+        "qty": 1,
+        "price": 390
+      }
+    ],
+    "subtotal": 390,
+    "shipping": 120,
+    "total": 510
+  },
+  {
+    "tracking_code": "PK80586907",
+    "created_at": "2026-09-29 00:26",
+    "status": "กำลังเตรียมจัดส่ง",
+    "items": [
+      {
+        "name": "หมวก SAINT SINNER",
+        "category": "หมวก",
+        "qty": 1,
+        "price": 390
+      },
+      {
+        "name": "เสื้อ SAINT SINNER",
+        "category": "เสื้อ",
+        "qty": 1,
+        "price": 590
+      }
+    ],
+    "subtotal": 980,
+    "shipping": 120,
+    "total": 1100
+  },
+  {
+    "tracking_code": "PK76736929",
+    "created_at": "2026-09-29 00:40",
+    "status": "กำลังเตรียมจัดส่ง",
+    "items": [
+      {
+        "name": "Multimeter",
+        "category": "measure",
+        "qty": 1,
+        "price": 390
+      }
+    ],
+    "subtotal": 390,
+    "shipping": 120,
+    "total": 510
+  },
+  {
+    "tracking_code": "PK14959899",
+    "created_at": "2026-09-29 00:46",
+    "status": "กำลังเตรียมจัดส่ง",
+    "items": [
+      {
+        "name": "Breadboard",
+        "category": "tool",
+        "qty": 1,
+        "price": 490
+      },
+      {
+        "name": "Soldering iron",
+        "category": "tool",
+        "qty": 1,
+        "price": 490
+      },
+      {
+        "name": "Raspberry Pi 4",
+        "category": "board",
+        "qty": 1,
+        "price": 390
+      }
+    ],
+    "subtotal": 1370,
+    "shipping": 120,
+    "total": 1490
+  }
+]

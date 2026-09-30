@@ -1,0 +1,43 @@
+[
+  {
+    "full_name": "สมชาย ใจดี",
+    "email": "somchai@example.com",
+    "password": "123456",
+    "phone": "0812345678",
+    "address": {
+      "street": "123/45",
+      "district": "เมือง",
+      "province": "อุบลราชธานี",
+      "postal_code": "34000"
+    },
+    "created_at": "now"
+  },
+  {
+    "full_name": "ปรเมศวร์ ถวิล",
+    "email": "fogustv4567@gmail.com",
+    "phone": "0840859086",
+    "address": {
+      "street": "65/บ้านน้อยดอนสวรรณ์/10/หนองเมือง/ม่วงสามสิบ",
+      "district": "หนองเมือง",
+      "province": "อุบลราชธานี",
+      "postal_code": ""
+    },
+    "created_at": "now",
+    "password_hash": "pbkdf2_sha256$240000$3a8d28d01e7ca5b9ba5d04976cbee2bb$3305dca5a116161513dfe38664054ee5714f64551841ce3ec326f76a3c568d06",
+    "user_id": "3b015745399640b79cab434ec376b075"
+  },
+  {
+    "user_id": "25c2f975563747e8b9db13d7547d24a9",
+    "full_name": "ศิวกร",
+    "email": "yung55@gmail.com",
+    "password_hash": "pbkdf2_sha256$240000$bfc2bd011af0de28013b0776ebe166a1$89bc33c917c1bcd9e0ba39e51cefbe9cc82fc9ab98d571a266a1d1aee12e465c",
+    "phone": "แก้วมณี",
+    "address": {
+      "street": "edsadasd",
+      "district": "adsadas",
+      "province": "dasdasd",
+      "postal_code": "34140"
+    },
+    "created_at": "now"
+  }
+]

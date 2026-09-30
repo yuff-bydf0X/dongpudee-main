@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="detail-shell">
+  <div class="detail-gallery">
+    <div class="detail-main-image">
+      <img src="{{ product.image }}" alt="{{ product.name }}">
+    </div>
+    <div class="detail-thumbs">
+      {% for item in gallery %}
+        <img src="{{ item }}" alt="thumb" class="thumb-image">
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="detail-content">
+    <p class="eyebrow">{{ product.tag }}</p>
+    <h1>{{ product.name }}</h1>
+    <div class="detail-price-row">
+      <span class="detail-price">฿{{ product.price }}</span>
+      <span class="detail-meta">{{ product.category }}</span>
+    </div>
+    <p class="lead">{{ description }}</p>
+
+    <div class="size-block">
+      <p>Choose size</p>
+      <div class="size-grid">
+        {% for size in product.sizes %}
+          <button type="button" class="size-chip">{{ size }}</button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="detail-actions">
+      <form method="post">
+        <input type="hidden" name="action" value="add">
+        <input type="hidden" name="no" value="{{ index }}">
+        <button class="btn" type="submit">Add to Cart</button>
+      </form>
+      <a class="btn btn-ghost" href="/page3">View Cart</a>
+    </div>
+
+    <div class="detail-nav">
+      {% if prev is not none %}<a class="btn btn-ghost" href="/page2?i={{ prev }}">← Previous</a>{% endif %}
+      {% if next is not none %}<a class="btn btn-ghost" href="/page2?i={{ next }}">Next →</a>{% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    const modal = document.getElementById('loginModal');
+    const trigger = document.querySelector('[data-login-open]');
+    if (!modal || !trigger) return;
+
+    const modalBox = modal.querySelector('.modal-box');
+    if (!modalBox) return;
+
+    function bindCloseButton() {
+      const closeButton = modalBox.querySelector('[data-login-close]');
+      if (!closeButton) return;
+      closeButton.addEventListener('click', function () {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+      });
+    }
+
+    function renderChoice() {
+      modalBox.innerHTML = `
+        <button type="button" class="close-modal" aria-label="Close login popup" data-login-close>×</button>
+        <div class="auth-choice">
+          <h2 id="loginTitle">Login</h2>
+          <p class="auth-choice-text">Choose an account action</p>
+          <div class="auth-choice-grid">
+            <a href="/signin" class="auth-choice-btn">Sign In</a>
+            <a href="/signup" class="auth-choice-btn auth-choice-btn-primary">Sign Up</a>
+          </div>
+        </div>
+      `;
+      bindCloseButton();
+    }
+
+    if (!trigger.dataset.authPopupBound) {
+      trigger.dataset.authPopupBound = 'true';
+      trigger.addEventListener('click', function () {
+        renderChoice();
+        modal.classList.add('show');
+        modal.setAttribute('aria-hidden', 'false');
+      });
+    }
+
+    modal.addEventListener('click', function (event) {
+      if (event.target === modal) {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && modal.classList.contains('show')) {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    });
+  })();
+</script>
+{% endblock %}

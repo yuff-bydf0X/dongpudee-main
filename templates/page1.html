@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="saint-hero">
+  <div>
+    <p class="eyebrow">NEW DROP / FALL 2026</p>
+    <h1>{{ hero_title }}</h1>
+    <p class="lead">{{ hero_text }}</p>
+    <div class="catalog-actions">
+      <a class="btn" href="#catalog">Shop the drop</a>
+      <a class="btn btn-ghost" href="/page2?i=0">View featured</a>
+      <a class="btn btn-ghost" href="/signin">บัญชีของฉัน / โปรไฟล์</a>
+    </div>
+  </div>
+</section>
+
+<form id="catalog" method="get" action="/page1" class="store-filters">
+  <div class="field search-field">
+    <label for="search-query">ค้นหาชื่อสินค้า</label>
+    <input id="search-query" type="search" name="q" value="{{ keyword }}" placeholder="พิมพ์ชื่อสินค้า">
+  </div>
+  <div class="field">
+    <label for="category-filter">หมวดหมู่</label>
+    <select id="category-filter" name="category">
+      <option value="">ทุกหมวดหมู่</option>
+      {% for category in categories %}
+      <option value="{{ category }}" {% if selected_category == category %}selected{% endif %}>{{ category }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label for="size-filter">ไซส์</label>
+    <select id="size-filter" name="size">
+      <option value="">ทุกไซส์</option>
+      {% for size in sizes %}
+      <option value="{{ size }}" {% if selected_size == size %}selected{% endif %}>{{ size }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label for="min-price">ราคาต่ำสุด</label>
+    <input id="min-price" type="number" name="min_price" min="0" value="{{ min_price }}" placeholder="บาท">
+  </div>
+  <div class="field">
+    <label for="max-price">ราคาสูงสุด</label>
+    <input id="max-price" type="number" name="max_price" min="0" value="{{ max_price }}" placeholder="บาท">
+  </div>
+  <div class="field">
+    <label for="sort-products">เรียงตาม</label>
+    <select id="sort-products" name="sort">
+      <option value="latest" {% if sort_by == 'latest' %}selected{% endif %}>สินค้าใหม่ล่าสุด</option>
+      <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>ราคาต่ำไปสูง</option>
+      <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>ราคาสูงไปต่ำ</option>
+      <option value="best_selling" {% if sort_by == 'best_selling' %}selected{% endif %}>สินค้าขายดี</option>
+    </select>
+  </div>
+  <div class="store-filter-actions">
+    <button class="btn" type="submit">ค้นหาและกรอง</button>
+    <a class="btn btn-secondary" href="/page1">ล้างตัวกรอง</a>
+  </div>
+</form>
+
+<p class="store-result-count">พบสินค้า {{ result_count }} จาก {{ count }} รายการ</p>
+
+{% if products %}
+<section class="product-grid">
+  {% for product in products %}
+    <article class="product-card">
+      <a href="/page2?i={{ product.no }}" class="product-image-link">
+        <div class="product-image-wrap">
+          <img src="{{ product.image }}" alt="{{ product.name }}">
+        </div>
+      </a>
+      <div class="product-info">
+        <span class="product-tag">{{ product.short_tag }}</span>
+        <h2><a href="/page2?i={{ product.no }}" class="product-name-link">{{ product.name }}</a></h2>
+        <p class="product-meta">{{ product.category }} · {{ product.sizes|join(', ') }}</p>
+        <div class="product-footer">
+          <span class="price">{{ product.price_label }}</span>
+          <div class="product-actions">
+            <form method="post">
+              <input type="hidden" name="action" value="add">
+              <input type="hidden" name="no" value="{{ product.no }}">
+              <button class="btn" type="submit">Add to Cart</button>
+            </form>
+            <a class="btn btn-secondary" href="/page2?i={{ product.no }}">Buy Now</a>
+          </div>
+        </div>
+      </div>
+    </article>
+  {% endfor %}
+</section>
+{% else %}
+<div class="empty store-empty">
+  <h2>ไม่พบสินค้าที่ตรงกับการค้นหา</h2>
+  <p>ลองเปลี่ยนคำค้นหา หมวดหมู่ ไซส์ หรือช่วงราคา</p>
+  <a class="btn btn-secondary" href="/page1">ดูสินค้าทั้งหมด</a>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    const modal = document.getElementById('loginModal');
+    const trigger = document.querySelector('[data-login-open]');
+    if (!modal || !trigger) return;
+
+    const modalBox = modal.querySelector('.modal-box');
+    if (!modalBox) return;
+
+    function bindCloseButton() {
+      const closeButton = modalBox.querySelector('[data-login-close]');
+      if (!closeButton) return;
+      closeButton.addEventListener('click', function () {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+      });
+    }
+
+    function renderChoice() {
+      modalBox.innerHTML = `
+        <button type="button" class="close-modal" aria-label="Close login popup" data-login-close>×</button>
+        <div class="auth-choice">
+          <h2 id="loginTitle">Login</h2>
+          <p class="auth-choice-text">Choose an account action</p>
+          <div class="auth-choice-grid">
+            <a href="/signin" class="auth-choice-btn">Sign In</a>
+            <a href="/signup" class="auth-choice-btn auth-choice-btn-primary">Sign Up</a>
+          </div>
+        </div>
+      `;
+      bindCloseButton();
+    }
+
+    if (!trigger.dataset.authPopupBound) {
+      trigger.dataset.authPopupBound = 'true';
+      trigger.addEventListener('click', function () {
+        renderChoice();
+        modal.classList.add('show');
+        modal.setAttribute('aria-hidden', 'false');
+      });
+    }
+
+    modal.addEventListener('click', function (event) {
+      if (event.target === modal) {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && modal.classList.contains('show')) {
+        modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    });
+  })();
+</script>
+{% endblock %}

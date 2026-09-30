@@ -1,0 +1,8 @@
+[
+  {"name": "Multimeter", "category": "measure", "qty": 1, "price": 390},
+  {"name": "Oscilloscope", "category": "measure", "qty": 1, "price": 590},
+  {"name": "Arduino Uno", "category": "board", "qty": 1, "price": 490},
+  {"name": "Breadboard", "category": "tool", "qty": 1, "price": 490},
+  {"name": "Soldering iron", "category": "tool", "qty": 1, "price": 490},
+  {"name": "Raspberry Pi 4", "category": "board", "qty": 1, "price": 390}
+]

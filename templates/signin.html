@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="panel auth-box">
+  <h1>Sign In</h1>
+  <p class="lead">เข้าสู่ระบบเพื่อดูข้อมูลผู้ใช้และที่อยู่ในการจัดส่ง</p>
+
+  {% if logged_in %}
+    {% if editing_profile %}
+    <form method="post" class="auth-edit-form">
+      <input type="hidden" name="action" value="update_profile">
+      <div class="field">
+        <label for="profile-name">ชื่อ-นามสกุล</label>
+        <input id="profile-name" type="text" name="full_name" value="{{ user_name }}" required>
+      </div>
+      <div class="field">
+        <label for="profile-email">อีเมล</label>
+        <input id="profile-email" type="email" name="email" value="{{ user_email }}" required>
+      </div>
+      <div class="field">
+        <label for="profile-phone">เบอร์โทร</label>
+        <input id="profile-phone" type="text" name="phone" value="{{ phone }}">
+      </div>
+      <div class="field">
+        <label for="profile-street">ที่อยู่</label>
+        <textarea id="profile-street" name="street" rows="2">{{ street }}</textarea>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="profile-district">อำเภอ/เขต</label>
+          <input id="profile-district" type="text" name="district" value="{{ district }}">
+        </div>
+        <div class="field">
+          <label for="profile-province">จังหวัด</label>
+          <input id="profile-province" type="text" name="province" value="{{ province }}">
+        </div>
+        <div class="field">
+          <label for="profile-postal">รหัสไปรษณีย์</label>
+          <input id="profile-postal" type="text" name="postal_code" value="{{ postal_code }}">
+        </div>
+      </div>
+      <div class="auth-edit-actions">
+        <button class="btn" type="submit">บันทึกโปรไฟล์</button>
+        <a class="btn btn-secondary" href="/signin">ยกเลิก</a>
+      </div>
+    </form>
+    {% else %}
+    <div class="auth-profile-card" role="status">
+      <div class="auth-profile-avatar" aria-hidden="true">{{ user_initial }}</div>
+      <div class="auth-profile-info">
+        <span class="auth-profile-label">บัญชีที่กำลังเข้าสู่ระบบ</span>
+        <strong>{{ user_name }}</strong>
+        <small>{{ user_email }}</small>
+      </div>
+      <div class="auth-profile-actions">
+        <a class="btn btn-secondary" href="/signin?edit=1">แก้ไขโปรไฟล์</a>
+        <form method="post">
+          <input type="hidden" name="action" value="switch_account">
+          <button class="btn btn-secondary" type="submit">เปลี่ยนบัญชี</button>
+        </form>
+        <form method="post">
+        <input type="hidden" name="action" value="logout">
+          <button class="btn" type="submit">ออกจากระบบ</button>
+        </form>
+      </div>
+    </div>
+    <section class="account-tracking">
+      <h2>ตรวจสอบพัสดุ</h2>
+      <form method="get" action="/signin" class="account-tracking-form">
+        <label for="account-tracking-code">กรอกเลขพัสดุ</label>
+        <input id="account-tracking-code" type="text" name="tracking_code" value="{{ tracking_code }}" placeholder="เช่น PK12345678" required>
+        <button class="btn" type="submit">ค้นหา</button>
+      </form>
+      {% if tracking_order %}
+      <div class="account-tracking-result">
+        <strong>{{ tracking_order.tracking_code }}</strong>
+        <span>{{ tracking_order.status }}</span>
+        <small>{{ tracking_order.created_at }} · ยอด ฿{{ tracking_order.total }}</small>
+      </div>
+      {% elif tracking_code %}
+      <p class="account-tracking-empty">ไม่พบเลขพัสดุนี้ กรุณาตรวจสอบแล้วลองอีกครั้ง</p>
+      {% endif %}
+    </section>
+    {% endif %}
+  {% else %}
+  <form method="post" class="auth-form">
+    <div class="field">
+      <label>ชื่อ-นามสกุลหรืออีเมล</label>
+      <input type="text" name="identifier" placeholder="ชื่อที่สมัครหรือ you@example.com" required>
+    </div>
+
+    <div class="field">
+      <label>รหัสผ่าน</label>
+      <input type="password" name="password" placeholder="••••••••" required>
+    </div>
+
+    <button type="submit" class="btn full">เข้าสู่ระบบ</button>
+    <p class="note">ยังไม่มีบัญชี? <a href="/signup">สมัครสมาชิก</a></p>
+  </form>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const popupLoginForm = document.querySelector('#loginModal .login-form');
+  if (popupLoginForm) {
+    popupLoginForm.method = 'post';
+    popupLoginForm.action = '/signin';
+    const popupInputs = popupLoginForm.querySelectorAll('input');
+    if (popupInputs.length >= 2) {
+      popupInputs[0].type = 'text';
+      popupInputs[0].name = 'identifier';
+      popupInputs[0].required = true;
+      popupInputs[0].placeholder = 'ชื่อที่สมัครหรือ you@example.com';
+      popupInputs[1].name = 'password';
+      popupInputs[1].required = true;
+    }
+    const identifierLabel = popupLoginForm.querySelector('label span');
+    if (identifierLabel) {
+      identifierLabel.textContent = 'ชื่อ-นามสกุลหรืออีเมล';
+    }
+  }
+</script>
+{% endblock %}
